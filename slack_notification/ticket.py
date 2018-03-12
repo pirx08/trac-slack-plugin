@@ -31,8 +31,13 @@ class SlackNotifcationPlugin(Component):
 
         def mapAuth(self, values):
             author = values.get('author',None)
-            if not self.authmap or not author:
-                return False
+            if not author:
+                return
+            # make sure author formatting is correct...
+            author = re.sub(r' <.*', u'', author)
+            if not self.authmap:
+                values['author'] = author
+                return
             try:
                 for am in self.authmap.strip().split(";"):
                     au,ad = am.strip().split(":")
@@ -44,20 +49,19 @@ class SlackNotifcationPlugin(Component):
                         continue
                     ad = ad.strip().split(",")
                     if len(ad) > 1 and ad[1]:
-                        values['author'] = "<%s>"%(ad[1])
-                        return True
+                        author = "<%s>"%(ad[1])
+                        break
                     if len(ad) > 0 and ad[0]:
-                        values['author'] = ad[0]
+                        author = ad[0]
                     if len(ad) > 2 and ad[2]:
-                        values['author'] = "<mailto:%s|%s>"%(ad[2],values['author'])
-                    return True
+                        author = "<mailto:%s|%s>"%(ad[2],author)
+                    break
             except Exception as err:
                 self.log.warning("failed to map author: %s"%(str(err)))
-            return False
+            values['author'] = author
 
         def notify(self, ntype, values):
                 # values['type'] = ntype
-                values['author'] = re.sub(r' <.*', u'', values['author'])
                 self.mapAuth(values)
                 #template = u'%(project)s/%(branch)s %(rev)s %(author)s: %(logmsg)s'
                 #template = u'%(project)s %(rev)s %(author)s: %(logmsg)s'
