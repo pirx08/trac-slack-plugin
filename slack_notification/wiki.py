@@ -63,10 +63,10 @@ class SlackWikiNotificationPlugin(Component):
         values["author"] = author
 
     def notify(self, values):
-        template = '_%(project)s_ :incoming_envelope:\n%(pagename)s[%(url)s] was *%(action)s* by %(author)s'
+        template = '_%(project)s_ :incoming_envelope:\n<%(url)s|%(pagename)s> was *%(action)s* by %(author)s'
 
         if (values['action'] == 'deleted'):
-            template = '_%(project)s_ :X:\n%(pagename)s[%(url)s] was *%(action)s*'
+            template = '_%(project)s_ :X:\n<%(url)s|%(pagename)s> was *%(action)s*'
 
         self.mapAuth(values)
 
