@@ -96,7 +96,7 @@ class SlackWikiNotificationPlugin(Component):
 
     def wiki_page_added(self, page):
         if (self.wikiadd != 1):
-            pass
+            return
 
         # otherwise we're enabled so move forward with notification...
         values = prepare_wiki_values(page, 'added')
@@ -106,7 +106,7 @@ class SlackWikiNotificationPlugin(Component):
 
     def wiki_page_deleted(self, page):
         if (self.wikidel != 1):
-            pass
+            return
 
         # otherwise we're enabled so move forward with notification...
         values = prepare_wiki_values(page, 'deleted')
@@ -116,7 +116,7 @@ class SlackWikiNotificationPlugin(Component):
 
     def wiki_page_changed(self, page, version, t, comment, author, ipnr):
         if (self.wikichange != 1):
-            pass
+            return
 
         # otherwise we're enabled so move forward with notification...
         #wikipagelist = self.wikipages.split(',')
