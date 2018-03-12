@@ -51,8 +51,8 @@ class SlackNotifcationPlugin(Component):
                     if len(ad) > 2 and ad[2]:
                         values['author'] = "<mailto:%s|%s>"%(ad[2],values['author'])
                     return True
-            except:
-                pass
+            except Exception as err:
+                self.log.warning("failed to map author: %s"%(str(err)))
             return False
 
         def notify(self, ntype, values):
