@@ -26,10 +26,39 @@ class SlackNotifcationPlugin(Component):
                 doc="Username of the bot on Slack notify")
         fields = Option('slack', 'fields', 'type,component,resolution',
                 doc="Fields to include in Slack notification")
+        authmap = Option('slack', 'authmap', '',
+                doc="Map trac-authors to Name, Slack users (preferred) and/or Email addresses (user1:Darth Vader,@darth.vader,darth.vader@deathstar.org;user2:Luke Skywalker,@luke.sky,luke@force.res;user3:,,obi1@hotmail.com)")
+
+        def mapAuth(self, values):
+            author = values.get('author',None)
+            if not self.authmap or not author:
+                return False
+            try:
+                for am in self.authmap.strip().split(";"):
+                    au,ad = am.strip().split(":")
+                    if not au:
+                        continue
+                    if author != au:
+                        continue
+                    if not ad:
+                        continue
+                    ad = ad.strip().split(",")
+                    if len(ad) > 1 and ad[1]:
+                        values['author'] = ad[1]
+                        return True
+                    if len(ad) > 0 and ad[0]:
+                        values['author'] = ad[0]
+                    if len(ad) > 2 and ad[2]:
+                        values['author'] += " ("+ad[2]+")"
+                    return True
+            except:
+                pass
+            return False
 
         def notify(self, type, values):
                 # values['type'] = type
                 values['author'] = re.sub(r' <.*', u'', values['author'])
+                values['author'] = self.mapAuth(values['author'])
                 #template = u'%(project)s/%(branch)s %(rev)s %(author)s: %(logmsg)s'
                 #template = u'%(project)s %(rev)s %(author)s: %(logmsg)s'
                 template = u'_%(project)s_ :incoming_envelope: \n%(type)s <%(url)s|%(id)s>: %(summary)s [*%(action)s* by @%(author)s]'
