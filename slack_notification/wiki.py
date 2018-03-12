@@ -29,7 +29,7 @@ class SlackWikiNotificationPlugin(Component):
     wikidel = IntOption('slack', 'wikidel', '1', doc="Turn delete notification on or off (defaults on)")
     wikichange = IntOption('slack', 'wikichange', '0', doc="Turn change notification on or off (defaults off)")
     wikipages = Option('slack', 'wikipages', '.*', doc="Regex of wiki pages to notify on change of")
-    authmap = Option('slack', 'authmap', '', doc="Map trac-authors to Name, Slack user IDs (preferred) and/or email addresses (user1:Darth Vader,@W123,darth.vader@deathstar.org;user2:Luke Skywalker,@W456,luke@force.res;user3:,,obi1@hotmail.com)")
+    authmap = Option('slack', 'authmap', '', doc="Map trac-authors to Name, Slack user IDs (preferred) and/or email addresses (<TracUsername>:<Name>,<@SlackUserID>,<email>;...)")
  
     def mapAuth(self, values):
         author = values.get('author',None)

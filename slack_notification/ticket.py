@@ -27,7 +27,7 @@ class SlackNotifcationPlugin(Component):
         fields = Option('slack', 'fields', 'type,component,resolution',
                 doc="Fields to include in Slack notification")
         authmap = Option('slack', 'authmap', '',
-                doc="Map trac-authors to Name, Slack user IDs (preferred) and/or email addresses (user1:Darth Vader,@W123,darth.vader@deathstar.org;user2:Luke Skywalker,@W456,luke@force.res;user3:,,obi1@hotmail.com)")
+                doc="Map trac-authors to Name, Slack user IDs (preferred) and/or email addresses (<TracUsername>:<Name>,<@SlackUserID>,<email>;...)")
 
         def mapAuth(self, values):
             author = values.get('author',None)

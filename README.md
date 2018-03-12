@@ -28,6 +28,7 @@ Configuration in trac.ini for ticket notificaitons:
     channel = #Trac
     username = Trac-Bot
     fields = type,component,resolution
+    authmap = <TracUsername>:<Name>,<@SlackUserID>,<email>;...	; map trac authors to slack userID (preferred) or user's name and email; defaults to none (show <TracUsername>)
 
 Configuration in trac.ini for wiki notifications:
 
@@ -39,7 +40,7 @@ Configuration in trac.ini for wiki notifications:
     wikidel = 1           ; 0 = off, 1 = on; defaults to 1
     wikichange = 0        ; 0 = off, 1 = on; defaults to 0
     wikipages = .*        ; when wikichange is on, regex to use to see if we should notify on the change; defaults to everything (.*)
-
+    authmap = <TracUsername>:<Name>,<@SlackUserID>,<email>;...	; map trac authors to slack userID (preferred) or user's name and email; defaults to none (show <TracUsername>)
 
 Thanks to Sebastian Southen for his work with the Irker Notification!
 
