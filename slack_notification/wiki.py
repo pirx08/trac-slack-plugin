@@ -29,16 +29,46 @@ class SlackWikiNotificationPlugin(Component):
     wikidel = IntOption('slack', 'wikidel', '1', doc="Turn delete notification on or off (defaults on)")
     wikichange = IntOption('slack', 'wikichange', '0', doc="Turn change notification on or off (defaults off)")
     wikipages = Option('slack', 'wikipages', '.*', doc="Regex of wiki pages to notify on change of")
+    authmap = Option('slack', 'authmap', '', doc="Map trac-authors to Name, Slack user IDs (preferred) and/or email addresses (user1:Darth Vader,@W123,darth.vader@deathstar.org;user2:Luke Skywalker,@W456,luke@force.res;user3:,,obi1@hotmail.com)")
  
+    def mapAuth(self, values):
+        author = values.get('author',None)
+        if not author:
+            return
+        # make sure author formatting is correct...
+        author = re.sub(r' <.*', '', author)
+        if not self.authmap:
+            values['author'] = author
+            return
+        try:
+            for am in self.authmap.strip().split(";"):
+                au,ad = am.strip().split(":")
+                if not au:
+                    continue
+                if author != au:
+                    continue
+                if not ad:
+                    continue
+                ad = ad.strip().split(",")
+                if len(ad) > 1 and ad[1]:
+                    author = "<%s>"%(ad[1])
+                    break
+                if len(ad) > 0 and ad[0]:
+                    author = ad[0]
+                if len(ad) > 2 and ad[2]:
+                    author = "<mailto:%s|%s>"%(ad[2],author)
+                break
+        except Exception as err:
+            self.log.warning("failed to map author: %s"%(str(err)))
+        values["author"] = author
+
     def notify(self, values):
-        template = '_%(project)s_ :incoming_envelope:\n%(pagename)s[%(url)s] was *%(action)s* by @%(author)s'
+        template = '_%(project)s_ :incoming_envelope:\n%(pagename)s[%(url)s] was *%(action)s* by %(author)s'
 
         if (values['action'] == 'deleted'):
             template = '_%(project)s_ :X:\n%(pagename)s[%(url)s] was *%(action)s*'
 
-        # make sure author formatting is correct...
-        if (values['author']):
-            values['author'] = re.sub(r' <.*', '', values['author'])
+        self.mapAuth(values)
 
         # format the message
         message = template % values
