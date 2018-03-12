@@ -27,7 +27,7 @@ class SlackNotifcationPlugin(Component):
         fields = Option('slack', 'fields', 'type,component,resolution',
                 doc="Fields to include in Slack notification")
         authmap = Option('slack', 'authmap', '',
-                doc="Map trac-authors to Name, Slack users (preferred) and/or Email addresses (user1:Darth Vader,@darth.vader,darth.vader@deathstar.org;user2:Luke Skywalker,@luke.sky,luke@force.res;user3:,,obi1@hotmail.com)")
+                doc="Map trac-authors to Name, Slack user IDs (preferred) and/or email addresses (user1:Darth Vader,@W123,darth.vader@deathstar.org;user2:Luke Skywalker,@W456,luke@force.res;user3:,,obi1@hotmail.com)")
 
         def mapAuth(self, values):
             author = values.get('author',None)
@@ -44,12 +44,12 @@ class SlackNotifcationPlugin(Component):
                         continue
                     ad = ad.strip().split(",")
                     if len(ad) > 1 and ad[1]:
-                        values['author'] = ad[1]
+                        values['author'] = "<%s>"%(ad[1])
                         return True
                     if len(ad) > 0 and ad[0]:
                         values['author'] = ad[0]
                     if len(ad) > 2 and ad[2]:
-                        values['author'] += " ("+ad[2]+")"
+                        values['author'] = "<mailto:%s|%s>"%(ad[2],values['author'])
                     return True
             except:
                 pass
