@@ -55,10 +55,10 @@ class SlackNotifcationPlugin(Component):
                 pass
             return False
 
-        def notify(self, type, values):
-                # values['type'] = type
+        def notify(self, ntype, values):
+                # values['type'] = ntype
                 values['author'] = re.sub(r' <.*', u'', values['author'])
-                values['author'] = self.mapAuth(values['author'])
+                self.mapAuth(values)
                 #template = u'%(project)s/%(branch)s %(rev)s %(author)s: %(logmsg)s'
                 #template = u'%(project)s %(rev)s %(author)s: %(logmsg)s'
                 template = u'_%(project)s_ :incoming_envelope: \n%(type)s <%(url)s|%(id)s>: %(summary)s [*%(action)s* by @%(author)s]'
