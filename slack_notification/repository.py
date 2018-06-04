@@ -5,13 +5,16 @@ from trac.core import *
 from trac.config import Option, IntOption
 from trac.versioncontrol.api import IRepositoryChangeListener, Changeset, Repository
 
-def prepare_repositorychange_values(repos, changeset, action=None):
+def prepare_repositorychange_values(env, repos, changeset, action=None):
     values = dict({
+        "project": env.project_name.strip(),
+        "projecturl": env.project_url,
         "repos_name": repos.name,
         "repos_reponame": repos.reponame,
         "repos_id": repos.id,
         "repos": changeset.repos,
         "rev": changeset.rev,
+        "revurl": env.abs_href.changeset(changeset.rev),
         "message": changeset.message,
         "author": changeset.author,
         "date": changeset.date,
@@ -65,10 +68,27 @@ class SlackRepositoryNotifcationPlugin(Component):
 
     def notify(self, values):
         self.mapAuth(values)
-        template = u''
+        template = u'_%(project)s_ :heavy_plus_sign:\n<%(revurl)s|r%(rev)s> was *%(action)s* by %(author)s'
         message = template % values
         # set type-specific attachements as needed
         attachments = []
+        if values["message"]:
+            attachments.append({
+                    'title': u'Message',
+                    'text': values['message']
+            })
+        attachments.append({
+                'title': u'Date',
+                'text': values['date']
+        })
+        attachments.append({
+                'title': u'RepoName',
+                'text': values['repos_reponame']
+        })
+        attachments.append({
+                'title': u'Repos',
+                'text': values['repos']
+        })
         # send it all out
         data = {
             "channel": self.channel,
@@ -91,7 +111,7 @@ class SlackRepositoryNotifcationPlugin(Component):
     def changeset_added(self, repos, changeset):
         if (self.repoadd != 1):
             return
-        values = prepare_repositorychange_values(repos, changeset, action="added")
+        values = prepare_repositorychange_values(self.env, repos, changeset, action="added")
         self.notify(values)
 
     """
@@ -104,5 +124,5 @@ class SlackRepositoryNotifcationPlugin(Component):
     def changeset_modified(self, repos, changeset, old_changeset):
         if (self.repomod != 1):
             return
-        values = prepare_repositorychange_values(repos, changeset, action="modified")
+        values = prepare_repositorychange_values(self.env, repos, changeset, action="modified")
         self.notify(values)
