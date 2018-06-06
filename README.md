@@ -49,7 +49,7 @@ Configuration in trac.ini for repository change notifications:
     repo-channel = #TracWiki
     repo-username = Trac-Bot
     repoadd = 1           ; 0 = off, 1 = on; defaults to 1
-    repochange = 0        ; 0 = off, 1 = on; defaults to 0
+    repomod = 0           ; 0 = off, 1 = on; defaults to 0
     authmap = <TracUsername>:<Name>,<@SlackUserID>,<email>;...	; map trac authors to slack userID (preferred) or user's name and email; defaults to none (show <TracUsername>)
 
 Thanks to Sebastian Southen for his work with the Irker Notification!
