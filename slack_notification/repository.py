@@ -110,6 +110,7 @@ class SlackRepositoryNotifcationPlugin(Component):
     @param changeset: 
     """
     def changeset_added(self, repos, changeset):
+        self.log.debug("slack notif repo: changeset_added (repoadd = %i)..."%(self.repoadd))
         if (self.repoadd != 1):
             return
         try:
@@ -126,6 +127,7 @@ class SlackRepositoryNotifcationPlugin(Component):
                             None if the old metadata cannot be retrieved.
     """
     def changeset_modified(self, repos, changeset, old_changeset):
+        self.log.debug("slack notif repo: changeset_modified (repomod = %i)..."%(self.repomod))
         if (self.repomod != 1):
             return
         try:
