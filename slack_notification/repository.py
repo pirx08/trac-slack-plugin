@@ -67,8 +67,9 @@ class SlackRepositoryNotifcationPlugin(Component):
         values["author"] = author
 
     def notify(self, values):
+        self.log.warning("slack notify values: %s"%(str(values)))
         self.mapAuth(values)
-        template = u'_%(project)s_ :heavy_plus_sign:\n<%(revurl)s|r%(rev)s> was *%(action)s* by %(author)s'
+        template = u'_%(project)s_ :heavy_plus_sign: \n<%(revurl)s|r%(rev)s> was *%(action)s* by %(author)s'
         message = template % values
         # set type-specific attachements as needed
         attachments = []
@@ -111,8 +112,11 @@ class SlackRepositoryNotifcationPlugin(Component):
     def changeset_added(self, repos, changeset):
         if (self.repoadd != 1):
             return
-        values = prepare_repositorychange_values(self.env, repos, changeset, action="added")
-        self.notify(values)
+        try:
+            values = prepare_repositorychange_values(self.env, repos, changeset, action="added")
+            self.notify(values)
+        except Exception as err:
+            self.log.exception("Fail to notify slack about changeset_added: %s" % (str(err)))
 
     """
     Called after a changeset has been modified in a repository.
@@ -124,5 +128,9 @@ class SlackRepositoryNotifcationPlugin(Component):
     def changeset_modified(self, repos, changeset, old_changeset):
         if (self.repomod != 1):
             return
-        values = prepare_repositorychange_values(self.env, repos, changeset, action="modified")
-        self.notify(values)
+        try:
+            values = prepare_repositorychange_values(self.env, repos, changeset, action="modified")
+            self.notify(values)
+        except Exception as err:
+            self.log.exception("Fail to notify slack about changeset_modified: %s" % (str(err)))
+
