@@ -65,7 +65,7 @@ class SlackNotifcationPlugin(Component):
                 self.mapAuth(values)
                 #template = u'%(project)s/%(branch)s %(rev)s %(author)s: %(logmsg)s'
                 #template = u'%(project)s %(rev)s %(author)s: %(logmsg)s'
-                template = u'_%(project)s_ :incoming_envelope: \n%(type)s <%(url)s|%(id)s>: %(summary)s [*%(action)s* by %(author)s]'
+                template = u'_%(project)s_ :ticket:\n%(type)s ticket <%(url)s|%(id)s>: %(summary)s [*%(action)s* by %(author)s]'
 
                 attachments = []
 
