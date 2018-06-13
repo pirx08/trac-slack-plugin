@@ -73,23 +73,21 @@ class SlackRepositoryNotifcationPlugin(Component):
         message = template % values
         # set type-specific attachements as needed
         attachments = []
+        fields = ["date","repos","repos_reponame"]
+        attrib = []
+        for field in fields:
+            if values[field]:
+                attrib.append(u'\u2022 %s: %s' % (field, values[field]))
+        if attrib:
+            attachments.append({
+                    'title': u'Attributes',
+                    'text': u"\n".join(attrib)
+            })
         if values["message"]:
             attachments.append({
                     'title': u'Message',
                     'text': values['message']
             })
-        attachments.append({
-                'title': u'Date',
-                'text': values['date']
-        })
-        attachments.append({
-                'title': u'RepoName',
-                'text': values['repos_reponame']
-        })
-        attachments.append({
-                'title': u'Repos',
-                'text': values['repos']
-        })
         # send it all out
         data = {
             "channel": self.channel,
